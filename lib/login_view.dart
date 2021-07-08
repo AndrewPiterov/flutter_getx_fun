@@ -47,6 +47,15 @@ class LoginView extends GetView<LoginController> {
                 child: Text('Login'),
               ),
             ),
+            // StreamBuilder<bool>(
+            //   stream: controller.isValidForm$,
+            //   builder: (_, snap) {
+            //     return ElevatedButton(
+            //       onPressed: snap.hasData && snap.data! ? () {} : null,
+            //       child: Text('Login'),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
