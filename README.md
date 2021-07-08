@@ -1,16 +1,88 @@
 # flutter_getx_fun
 
-A new Flutter project.
+```dart
+  Stream<bool> get isValidForm$ =>
+      CombineLatestStream.combine2<String?, String?, bool>(
+          username.stream,
+          password.stream,
+          (a, b) => !isStringNullOrEmpty(a) && !isStringNullOrEmpty(b));
 
-## Getting Started
+  void changeName(String name) {
+    username.value = name;
+    isValidForm.value = !isStringNullOrEmpty(username.value) &&
+        !isStringNullOrEmpty(password.value);
+  }
 
-This project is a starting point for a Flutter application.
+  void changePassword(String pass) {
+    password.value = pass;
+    isValidForm.value = !isStringNullOrEmpty(username.value) &&
+        !isStringNullOrEmpty(password.value);
+  }
+```
 
-A few resources to get you started if this is your first Flutter project:
+```dart
+group('Given OBS field.', () {
+    test('When set only name. Than form is not valid', () {
+      // Arrange
+      final controller = LoginController();
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+      // Act
+      controller.changeName('Andrew');
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+      // Assert
+      expect(controller.isValidForm.value, isFalse);
+    });
+
+    test('When set only password. Than form is not valid', () {
+      // Arrange
+      final controller = LoginController();
+
+      // Act
+      controller.changePassword('123456');
+
+      // Assert
+      expect(controller.isValidForm.value, isFalse);
+    });
+
+    test('When set username and password. Than form is valid', () {
+      // Arrange
+      final controller = LoginController();
+
+      // Act
+      controller.changeName('Andrew');
+      controller.changePassword('123456');
+
+      // Assert
+      expect(controller.isValidForm.value, isTrue);
+    });
+  });
+
+  group('Given is form validation flag as Stream', () {
+    test('When nothing set. Than flag is false', () async {
+      // Arrange
+      final controller = LoginController();
+
+      expectLater(controller.isValidForm$, emits(false));
+
+      // Act
+      controller.changeName('');
+      controller.changePassword('');
+      // Assert
+      //  expect(await controller.isValidForm$.first, isFalse);
+    });
+
+    test('When username and password set. Than flag is true', () async {
+      // Arrange
+      final controller = LoginController();
+
+      expectLater(controller.isValidForm$, emits(true));
+
+      // Act
+      controller.changeName('Andrew');
+      controller.changePassword('123456');
+
+      // Assert
+      // expect(await controller.isValidForm$.first, isTrue);
+    });
+  });
+```
